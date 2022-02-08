@@ -1,36 +1,39 @@
-#super user
-admin - admin
+### New docker setup
+        docker system prune -a
+        docker system prune --volumes
 
-# Anaconda powershell prompt - Python3.8
-cd ckit/server
-python -m venv env
+        cd client
+        npm install --save-dev @angular-devkit/build-angular
 
- .\env\Scripts\activate
+        check whether the UI is working
+        ng serve --open
 
-pip install -r requirements.txt
+        cd spine
 
-export PGDATABASE=taxi PGUSER=taxi PGPASSWORD=taxi
+        #create
+        docker-compose up -d --build
 
-#create
-docker-compose up -d --build
+        In another command shell
+        cd d:/spine/
 
-#Start the psql tool in the taxi-database Docker container with the following command:
-docker-compose exec taxi-database psql -U postgres
+        #Start the psql tool in the taxi-database Docker container with the following command:
+        docker-compose exec taxi-database psql -U postgres
 
-CREATE USER taxi WITH SUPERUSER CREATEDB CREATEROLE PASSWORD 'taxi';
-CREATE DATABASE taxi OWNER taxi;
+        CREATE USER taxi WITH SUPERUSER CREATEDB CREATEROLE PASSWORD 'taxi';
+        CREATE DATABASE taxi OWNER taxi;
 
-docker-compose down
+        \q
 
-cd ckit
 
-#bring it up again
-docker-compose up -d
+        #migrate
+        docker-compose exec taxi-server python manage.py migrate
+        docker-compose exec taxi-server python manage.py makemigrations
 
-#migrate
-docker-compose exec taxi-server python manage.py migrate
-docker-compose exec taxi-server python manage.py makemigrations
+        docker-compose exec taxi-server python manage.py createsuperuser
 
+        user:admin
+        pwd:admin
+        
 docker-compose exec taxi-server pytest
 
 # production
