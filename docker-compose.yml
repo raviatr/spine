@@ -34,6 +34,50 @@ services:
     ports:
       - 8001:8000
 
+  celery_worker:
+    build:
+      context: ./server
+      #dockerfile: ./server/Dockerfile
+    image: taxi_celery_worker
+    command: /start-celeryworker
+    volumes: # new
+      - ./server:/usr/src/app
+    env_file:
+      - ./server/.env
+    depends_on:
+      - taxi-redis
+      - taxi-database
+
+  celery_beat:
+    build:
+      context: ./server
+      #dockerfile: ./server/Dockerfile
+    image: taxi_celery_beat
+    command: /start-celerybeat
+    volumes:
+      - ./server:/usr/src/app
+    env_file:
+      - ./server/.env
+    depends_on:
+      - taxi-redis
+      - taxi-database
+
+  flower:
+    build:
+      context: ./server
+      #dockerfile: ./server/Dockerfile
+    image: taxi_celery_flower
+    command: /start-flower
+    volumes:
+      - ./server:/usr/src/app
+    env_file:
+      - ./server/.env
+    ports:
+      - 5557:5555
+    depends_on:
+      - taxi-redis
+      - taxi-database
+
   taxi-client:
     build:
       context: ./client
